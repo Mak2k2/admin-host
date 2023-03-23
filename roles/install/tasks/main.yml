@@ -27,6 +27,7 @@
 - name: Installing kubectl
   package:
     name:
+      - unzip
       - apt-transport-https
       - kubectl=1.23.6-00
     state: present

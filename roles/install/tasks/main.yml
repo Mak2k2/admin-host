@@ -1,0 +1,40 @@
+---
+
+- name: check OS
+  assert:
+    that: "ansible_os_family == 'Debian'"
+    fail_msg: "Wrong operating system!"
+    success_msg: "Suitable operating system"
+
+- name: Update and upgrade apt packages
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name:  Add kubectl GPG key (Debian)
+  apt_key: 
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  become: true
+
+- name: Add kubectl Repo (Debian)
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: Installing kubectl
+  package:
+    name:
+      - apt-transport-https
+      - kubectl=1.23.6-00
+    state: present
+    update_cache: true
+    force: yes
+
+- name: Unarchive Terraform
+  unarchive:
+    src: http://hub.mcs.mail.ru/repository/terraform-binary/mirror/latest/terraform_1.1.9_linux_arm64.zip
+    dest: /usr/local/bin
+    remote_src: yes
